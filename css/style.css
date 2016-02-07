@@ -187,6 +187,17 @@ body {
 		color: #008fff;
 	}
 
+
+/* ERROR */
+.error {
+	border-left: 4px solid #ee4d2e;
+	color: #ee4d2e;
+	padding-left: 2rem;
+	font-size: 4rem;
+	margin-bottom: 2rem;
+}
+
+
 @media(max-width: 39.9rem) {
 	body {
 		padding-top: 0rem;

@@ -1,9 +1,3 @@
-var data = [
-	{"name": "Dealer","isDealer": true,"score": 10,"cardlist": [[0, 11]]},
-	{"name": "nralbrecht","isDealer": false,"balance":"1000","score": 14,"cardlist": [[0, 11],[2, 3],[1, 1]]},
-	{"name": "schwartz","isDealer": false,"balance":"​1000","score": 18,"cardlist": [[2, 10],[2, 2],[1, 6]]}
-];
-
 var Card = React.createClass({
 	getSymbol: function(id) {
 		switch (id) {
@@ -87,7 +81,7 @@ var User = React.createClass({
 	}
 });
 
-var UserList = React.createClass({
+var PlainUserList = React.createClass({
 	render: function() {
 		var users = [];
 
@@ -102,7 +96,40 @@ var UserList = React.createClass({
 	}
 });
 
+var Error = React.createClass({
+	render: function() {
+		return(
+			<div className="row error">{this.props.message}</div>
+		);
+	}
+});
+
+var UserList = React.createClass({
+	getInitialState: function() {
+		return {
+			"err": null,
+			"data": [
+				{"name": "Dealer","isDealer": true,"score": 10,"cardlist": [[0, 11]]},
+				{"name": "nralbrecht","isDealer": false,"balance":"1000","score": 14,"cardlist": [[0, 11],[2, 3],[1, 1]]},
+				{"name": "schwartz","isDealer": false,"balance":"​1000","score": 18,"cardlist": [[2, 10],[2, 2],[1, 6]]}
+			]
+		};
+	},
+	render: function() {
+		if (this.state.err) {
+			return(
+				<Error message={this.state.err} />
+			);
+		} else {
+			return(
+				<PlainUserList data={this.state.data} />
+			);
+		}
+	}
+});
+
+
 React.render(
-	<UserList data={data} />,
+	<UserList/>,
 	document.getElementById('userlist')
 );

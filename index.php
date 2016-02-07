@@ -37,8 +37,8 @@
 					</section>
 				</div>
 			</div>
- 		</nav>
- 		<main class="container">
+		</nav>
+		<main class="container">
 			<div class="controll">
 				<div class="controll__title row">Bedienung</div>
 				<div class="row">
@@ -46,10 +46,8 @@
 					<a class="button controll__button" href="#">Aufhören</a>
 				</div>
 			</div>
- 			<div id="userlist">
- 				Bitte aktivieren sie JavaScript
-			</div>
- 		</main>
+			<div id="userlist"></div>
+		</main>
 		<script src="components.js"></script>
 	</body>
 </html>
