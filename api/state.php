@@ -3,7 +3,7 @@
 	"err": null,
 	"data": [
 		{
-			"name": "Dealer",
+			"name": "Kluas220",
 			"isDealer": true,
 			"cardlist": [
 				[0, 11]

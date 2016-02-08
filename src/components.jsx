@@ -86,7 +86,6 @@ var PlainUserList = React.createClass({
 		var users = [];
 
 		this.props.data.map(function(user) {
-
 			users.push(<User key={user.name} data={user} />);
 		});
 
@@ -105,16 +104,28 @@ var Error = React.createClass({
 });
 
 var UserList = React.createClass({
-	getInitialState: function() {
-		return {
-			"err": null,
-			"data": [
-				{"name": "Dealer","isDealer": true,"score": 10,"cardlist": [[0, 11]]},
-				{"name": "nralbrecht","isDealer": false,"balance":"1000","score": 14,"cardlist": [[0, 11],[2, 3],[1, 1]]},
-				{"name": "schwartz","isDealer": false,"balance":"​1000","score": 18,"cardlist": [[2, 10],[2, 2],[1, 6]]}
-			]
+	httpRequest: new XMLHttpRequest(),
+	loadGameStateFromServer: function() {
+		this.httpRequest.onreadystatechange = this.onreadystatechange;
+		this.httpRequest.open('GET', this.props.url);
+		this.httpRequest.send();
+	},
+	onreadystatechange: function(data) {
+		if (this.httpRequest.readyState == 4 && this.httpRequest.status == 200) {
+			this.setState(JSON.parse(this.httpRequest.responseText));
+		}
+		else if (this.httpRequest.readyState == 4 && this.httpRequest.status != 200) {
+			this.setState({"err": "Daten konnten nicht geladen werden."});
 		};
 	},
+	getInitialState: function() {
+		return {"err": "Daten konnten nicht geladen werden."};
+	},
+	componentDidMount: function() {
+		this.loadGameStateFromServer();
+		setInterval(this.loadGameStateFromServer, this.props.pollInterval);
+	},
+
 	render: function() {
 		if (this.state.err) {
 			return(
@@ -130,6 +141,6 @@ var UserList = React.createClass({
 
 
 React.render(
-	<UserList/>,
+	<UserList url="api/state.php" pollInterval={3000}/>,
 	document.getElementById('userlist')
 );
