@@ -74,9 +74,22 @@
 			return $this->database->query('SELECT `valid_until` <= CURRENT_TIMESTAMP() AS "res" FROM `tokkens` WHERE `tokken` = "'.$tokken.'";')[0]['res'];
 		}
 
-		public function disable_tokken($tokken)
-		{
+		public function disable_tokken($tokken) {
 			return $this->database->query("UPDATE tokkens SET enabled = 0 WHERE tokken = '".$tokken."';");
+		}
+
+		public function join_tokken($tokken, $bet) {
+			// TODO: überprüfen ob 0 < bet <= balance
+
+			$res_game = $this->database->query("SELECT `id` FROM `game` WHERE `end_time` IS NULL ORDER BY(`start_time`) DESC LIMIT 1;");
+			if (count($this->database->query("SELECT id FROM player WHERE user_id = (SELECT user_id FROM tokkens WHERE tokken = '".$tokken."') AND game_id = ".$res_game[0]['id'].";")) > 0) { return; }
+
+			if (count($res_game) == 0) {
+				$this->database->query("INSERT INTO `game` VALUES();");
+				$res_game = $this->database->query("SELECT `id` FROM `game` WHERE `end_time` IS NULL ORDER BY(`start_time`) DESC LIMIT 1;");
+			}
+
+			$this->database->query("INSERT INTO `player`(`id`, `game_id`, `user_id`, `cards`, `bet`) VALUES (null, ".$res_game[0]['id'].", (SELECT `user_id` FROM `tokkens` WHERE `tokken` = '".$tokken."'), '".rand(0, 3).",".rand(0, 13)." "."', ".$bet.");");
 		}
 	}
 
