@@ -91,6 +91,10 @@
 
 			$this->database->query("INSERT INTO `player`(`id`, `game_id`, `user_id`, `cards`, `bet`) VALUES (null, ".$res_game[0]['id'].", (SELECT `user_id` FROM `tokkens` WHERE `tokken` = '".$tokken."'), '".rand(0, 3).",".rand(0, 13)." "."', ".$bet.");");
 		}
+
+		public function add_card($tokken) {
+			$this->database->query("UPDATE `player` SET `cards` = CONCAT(`cards`, '".rand(0, 3).",".rand(0, 13)." "."') WHERE `game_id` = (SELECT `id` FROM `game` WHERE `end_time` IS NULL ORDER BY(`start_time`) DESC LIMIT 1) AND `user_id` = (SELECT `user_id` FROM `tokkens` WHERE `tokken` = '".$tokken."');");
+		}
 	}
 
 	$api = new api("blackjack_multiplayer");
