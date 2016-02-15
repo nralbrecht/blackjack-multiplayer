@@ -3,14 +3,11 @@ body {
 	color: #fff;
 	padding-top: 7.2rem;
 }
-.hidden {
-	display: none;
-}
-
 
 /* LINKS */
 	a {
 		color: #fff;
+		cursor: pointer;
 	}
 	a:hover {
 		color: #fff;
@@ -42,6 +39,12 @@ body {
 	}
 
 
+/* INPUT */
+	input[type="email"]:focus, input[type="number"]:focus, input[type="password"]:focus, input[type="search"]:focus, input[type="tel"]:focus, input[type="text"]:focus, input[type="url"]:focus, textarea:focus, select:focus {
+		border-color: #161618;
+	}
+
+
 /* NAVIGATION */
 	.navigation {
 		background-color: #008fff;
@@ -59,13 +62,13 @@ body {
 		font-size: 4rem;
 		font-weight: bold;
 	}
-	.navigation__itemlist {
+	.navigation__itemlist ul {
 		float: right;
 		list-style-type: none;
 		margin-bottom: 0;
 		background-color: #008fff;
 	}
-	.navigation__itemlist li {
+	.navigation__itemlist ul li {
 		float: left;
 		margin-left: 1.5rem;
 		margin-bottom: 0;
@@ -73,21 +76,29 @@ body {
 
 
 /* DROPDOWN */
-	.dropdown {
-		padding: 1rem;
-		line-height: 1.6;
-		float: right;
-		max-width: 50rem;
+	#dropdown {
 		background-color: #008fff;
-	}
-	.dropdown--hidden {
-		display: none;
+		float: right;
+		line-height: 1.6;
+		margin-right: -2rem;
+		max-width: 50rem;
+		opacity: 0.9;
+		padding: 1rem;
 	}
 	.dropdown--orange {
 		background-color: #ee4d2e;
 	}
-	.dropdown--disabled {
-		background-color: #aaa;
+
+	/* DROPDOWN CONTENT */
+	.dropdown__content h4 {
+		margin: 0;
+		margin-top: -1.5rem;
+	}
+	.dropdown__content lable, .dropdown__content input {
+		font-size: 1.4rem;
+	}
+	.dropdown__content input {
+		margin-bottom: 0;
 	}
 
 
@@ -202,10 +213,18 @@ body {
 	body {
 		padding-top: 0rem;
 	}
-	.dropdown {
+	#dropdown {
+		margin-bottom: 2rem;
+		margin-top: 2rem;
+		margin: 0 auto;
 		max-width: 100%;
+		padding-top: 2rem;
+		width: 100%;
 	}
 	.navigation {
 		position: relative;
+	}
+	.controll {
+		margin-top: 3rem;
 	}
 }

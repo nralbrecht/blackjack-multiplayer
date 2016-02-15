@@ -7,13 +7,13 @@
 		<title>Blackjack Spiel</title>
 
 		<!-- React -->
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js"></script>
+		<script src="js/react.min.js"></script>
 
 		<!-- CSS -->
 		<link rel="stylesheet" href="css/normalize.css">
 		<link rel="stylesheet" href="css/milligram.min.css">
 		<link rel="stylesheet" href="css/style.css">
-		<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,700">
+		<link rel="stylesheet" href="css/fonts.css">
 	</head>
 	<body>
 		<nav class="navigation">
@@ -21,21 +21,18 @@
 				<div class="row">
 					<a href="./" class="navigation__title">Blackjack</a>
 					<div class="column"></div>
-					<ul class="navigation__itemlist">
-						<li><a href="#" onclick="document.getElementById('dropdown').style.display=(document.getElementById('dropdown').style.display == 'none')? 'block':'none';">Login</a></li>
-						<li><a href="#">Logout</a></li>
-						<li><a href="#">Profil</a></li>
-					</ul>
+					<div class="navigation__itemlist">
+						<ul>
+							<li>
+								<a onclick="document.getElementById('dropdown').style.display=(document.getElementById('dropdown').style.display == 'none')? 'block':'none';">Login</a>
+							</li>
+							<li>
+								<a onclick="document.getElementById('dropdown').style.display=(document.getElementById('dropdown').style.display == 'none')? 'block':'none';">Logout</a>
+							</li>
+						</ul>
+					</div>
 				</div>
-				<div class="clearfix row">
-					<div class="column"></div>
-					<section id="dropdown" class="dropdown">
-						Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-						tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-						quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-						consequat.
-					</section>
-				</div>
+				<div id="dropdown" style="display: none"></div>
 			</div>
 		</nav>
 		<main class="container">
