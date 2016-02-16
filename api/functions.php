@@ -63,11 +63,16 @@
 		}
 
 		public function is_user_valid($username, $password) {
-			$res = $this->database->query("SELECT password FROM user WHERE `enabled` = 1 AND username = '".$username."' LIMIT 1;");
+			$res = $this->database->query("SELECT `password` FROM `user` WHERE `enabled` = 1 AND username = '".$username."' LIMIT 1;");
 			if (empty($res)) { return false; }
 			$hash = $res[0]['password'];
 
-			return crypt($password, $hash) == $hash;
+			$is_valid = crypt($password, $hash) == $hash;
+			if ($is_valid) {
+				$this->database->query("UPDATE `user` SET `last_login` = CURRENT_TIMESTAMP() WHERE `enabled` = 1 AND `username` = '".$username."' LIMIT 1;");
+			}
+
+			return $is_valid;
 		}
 
 		public function is_tokken_valid($tokken) {
@@ -79,17 +84,29 @@
 		}
 
 		public function join_tokken($tokken, $bet) {
-			// TODO: überprüfen ob 0 < bet <= balance
-
+			// get id of runing game
 			$res_game = $this->database->query("SELECT `id` FROM `game` WHERE `end_time` IS NULL ORDER BY(`start_time`) DESC LIMIT 1;");
-			if (count($this->database->query("SELECT id FROM player WHERE user_id = (SELECT user_id FROM tokkens WHERE tokken = '".$tokken."') AND game_id = ".$res_game[0]['id'].";")) > 0) { return; }
 
 			if (count($res_game) == 0) {
+				// start new game
 				$this->database->query("INSERT INTO `game` VALUES();");
 				$res_game = $this->database->query("SELECT `id` FROM `game` WHERE `end_time` IS NULL ORDER BY(`start_time`) DESC LIMIT 1;");
+			} else {
+				if ($this->database->query("SELECT COUNT(`id`) AS 'count' FROM `player` WHERE `user_id` = (SELECT `user_id` FROM `tokkens` WHERE `tokken` = '".$tokken."') AND `game_id` = ".$res_game[0]['id'].";")[0]['count'] > 0) {
+					return "EXISTS";
+				}
 			}
 
+			// bet is in range
+			$balance = $this->database->query("SELECT `balance` FROM `user` WHERE `id` = (SELECT `user_id` FROM `tokkens` WHERE `tokken` = '".$tokken."');")[0]['balance'];
+			if ($bet < 1 || $bet > $balance) {
+				return "BET_INVALID";
+			}
+
+			// insert new player with random cards
 			$this->database->query("INSERT INTO `player`(`game_id`, `user_id`, `cards`, `bet`) VALUES (".$res_game[0]['id'].", (SELECT `user_id` FROM `tokkens` WHERE `tokken` = '".$tokken."'), '".rand(0, 3).",".rand(0, 13)." "."', ".$bet.");");
+
+			return "CREATED";
 		}
 
 		public function add_card($tokken) {
