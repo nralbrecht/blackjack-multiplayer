@@ -62,6 +62,19 @@
 			return $this->database->query('SELECT tokken FROM tokkens WHERE user_id = '.$id.' ORDER BY valid_until DESC LIMIT 1')[0]['tokken'];
 		}
 
+		public function register_user($username, $password) {
+
+			if ($this->database->query("SELECT COUNT(`id`) AS 'count' FROM `user` WHERE `username` = '".$username."'")[0]['count'] > 0) {
+				return "EXISTS";
+			} else {
+				if ($this->database->query("INSERT INTO `user`(`username`, `password`) VALUES ('".$username."','".$password."');")) {
+					return "CREATED";
+				} else {
+					return "DUPLICATED_USERNAME";
+				}
+			}
+		}
+
 		public function is_user_valid($username, $password) {
 			$res = $this->database->query("SELECT `password` FROM `user` WHERE `enabled` = 1 AND username = '".$username."' LIMIT 1;");
 			if (empty($res)) { return false; }
