@@ -117,7 +117,7 @@
 			}
 
 			// insert new player with random cards
-			$this->database->query("INSERT INTO `player`(`game_id`, `user_id`, `cards`, `bet`) VALUES (".$res_game[0]['id'].", (SELECT `user_id` FROM `tokkens` WHERE `tokken` = '".$tokken."'), '".rand(0, 3).",".rand(0, 13)." "."', ".$bet.");");
+			$this->database->query("INSERT INTO `player`(`game_id`, `user_id`, `cards`, `bet`) VALUES (".$res_game[0]['id'].", (SELECT `user_id` FROM `tokkens` WHERE `tokken` = '".$tokken."'), '".rand(0, 3).",".rand(0, 13)." ".rand(0, 3).",".rand(0, 13)." ', ".$bet.");");
 
 			return "CREATED";
 		}
@@ -126,8 +126,44 @@
 			$this->database->query("UPDATE `player` SET `cards` = CONCAT(`cards`, '".rand(0, 3).",".rand(0, 13)." ') WHERE `game_id` = (SELECT `id` FROM `game` WHERE `end_time` IS NULL ORDER BY(`start_time`) DESC LIMIT 1) AND `user_id` = (SELECT `user_id` FROM `tokkens` WHERE `tokken` = '".$tokken."');");
 		}
 
+		private function player_has_won($cards) {
+			$lookup_list = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10];
+			$cards = explode(' ', trim($cards));
+
+			$output = 0;
+			$output2 = 0;
+
+			foreach ($cards as $card) {
+				$symbol = substr($card, 2);
+
+				if ($symbol == 0) {
+					$output += 1;
+					$output2 += 11;
+				} else {
+					$output += $lookup_list[$symbol];
+					$output2 += $lookup_list[$symbol];
+				}
+			}
+			// TODO: test vs. dealer
+			return $output <= 21 || $output2 <= 21;
+		}
+
 		public function finish_round($tokken) {
 			$this->database->query("UPDATE `player` SET `is_finished` = 1 WHERE `game_id` = (SELECT `id` FROM `game` WHERE `end_time` IS NULL ORDER BY(`start_time`) DESC LIMIT 1) AND `user_id` = (SELECT `user_id` FROM `tokkens` WHERE `tokken` = '".$tokken."');");
+
+			// if all player have finished
+			if($this->database->query("SELECT COUNT(`id`) AS 'count' FROM `player` WHERE `game_id` = (SELECT `id` FROM `game` WHERE `end_time` IS NULL ORDER BY(`start_time`) DESC LIMIT 1) AND `is_finished` = 0")[0]['count'] == 0) {
+				$players = $this->database->query("SELECT `user_id`, `cards`, `bet` FROM `player` WHERE `game_id` = (SELECT `id` FROM `game` WHERE `end_time` IS NULL ORDER BY(`start_time`) DESC LIMIT 1) AND `is_finished` = 1");
+				$this->database->query("UPDATE `game` SET `end_time` = CURRENT_TIMESTAMP() WHERE `end_time` IS NULL ORDER BY(`start_time`) DESC LIMIT 1");
+
+				foreach ($players as $player) {
+					if ($this->player_has_won($player['cards'])) {
+						$this->database->query("UPDATE `user` SET `balance` = `balance` + ".$player['bet']." WHERE `id` = '".$player['user_id']."';");
+					} else {
+						$this->database->query("UPDATE `user` SET `balance` = `balance` - ".$player['bet']." WHERE `id` = '".$player['user_id']."';");
+					}
+				}
+			}
 		}
 	}
 
