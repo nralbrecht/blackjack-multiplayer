@@ -126,7 +126,7 @@
 			$this->database->query("UPDATE `player` SET `cards` = CONCAT(`cards`, '".rand(0, 3).",".rand(0, 13)." ') WHERE `game_id` = (SELECT `id` FROM `game` WHERE `end_time` IS NULL ORDER BY(`start_time`) DESC LIMIT 1) AND `user_id` = (SELECT `user_id` FROM `tokkens` WHERE `tokken` = '".$tokken."');");
 		}
 
-		private function player_has_won($cards) {
+		private function player_score($cards) {
 			$lookup_list = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10];
 			$cards = explode(' ', trim($cards));
 
@@ -144,8 +144,15 @@
 					$output2 += $lookup_list[$symbol];
 				}
 			}
+			return ($output < $output2)? $output : $output2;
+		}
+
+		private function player_has_won($cards) {
+			$score = player_score($cards);
+
 			// TODO: test vs. dealer
-			return $output <= 21 || $output2 <= 21;
+
+			return $score <= 21;
 		}
 
 		public function finish_round($tokken) {
@@ -164,6 +171,19 @@
 					}
 				}
 			}
+		}
+
+		public function get_state()	{
+			if ($this->database->query('SELECT COUNT(`id`) AS "count" FROM `game` WHERE `end_time` IS NULL ORDER BY(`start_time`) DESC LIMIT 1')[0]['count'] < 1) {
+				return ['err' => 'Es läuft gerade kein Spiel.', 'data' => null];
+			}
+
+			$output = [
+				'err' => null,
+				'data' => $this->database->query('SELECT u.`username`, 0 AS "is_dealer", p.`cards`, p.`is_finished` FROM `player` p JOIN `user` u ON p.`user_id` = u.`id` WHERE p.`game_id` = (	SELECT g.`id` FROM `game` g WHERE g.`end_time` IS NULL ORDER BY(g.`start_time`) DESC LIMIT 1)')
+			];
+
+			return $output;
 		}
 	}
 
