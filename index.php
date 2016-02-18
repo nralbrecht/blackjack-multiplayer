@@ -45,6 +45,6 @@
 			</div>
 			<div id="userlist"></div>
 		</main>
-		<script src="components.js"></script>
+		<script src="js/components.js"></script>
 	</body>
 </html>
