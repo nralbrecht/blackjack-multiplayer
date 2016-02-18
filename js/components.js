@@ -2,42 +2,10 @@ var Card = React.createClass({
 	displayName: 'Card',
 
 	getSymbol: function (id) {
-		switch (id) {
-			case 0:
-				return 'A';
-			case 1:
-			case 2:
-			case 3:
-			case 4:
-			case 5:
-			case 6:
-			case 7:
-			case 8:
-			case 9:
-				return id++;
-			case 10:
-				return 'B';
-			case 11:
-				return 'D';
-			case 12:
-				return 'K';
-			default:
-				return id;
-		}
+		return ['A', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'B', 'D', 'K'][id];
 	},
 	getSuit: function (id) {
-		switch (id) {
-			case 0:
-				return '♥';
-			case 1:
-				return '♦';
-			case 2:
-				return '♣';
-			case 3:
-				return '♠';
-			default:
-				return id;
-		}
+		return ['♥', '♦', '♣', '♠'][id];
 	},
 	render: function () {
 		return React.createElement(
@@ -46,17 +14,17 @@ var Card = React.createClass({
 			React.createElement(
 				'div',
 				{ className: 'card__top' },
-				this.getSymbol(this.props.data[1])
+				this.getSymbol(+this.props.data[1])
 			),
 			React.createElement(
 				'div',
 				{ className: 'card__suit' },
-				this.getSuit(this.props.data[0])
+				this.getSuit(+this.props.data[0])
 			),
 			React.createElement(
 				'div',
 				{ className: 'card__bottom' },
-				this.getSymbol(this.props.data[1])
+				this.getSymbol(+this.props.data[1])
 			)
 		);
 	}
@@ -68,11 +36,14 @@ var User = React.createClass({
 	render: function () {
 		var cards = [];
 
-		this.props.data.cardlist.map(function (card) {
-			cards.push(React.createElement(Card, { key: Math.random(), data: card }));
+		var cardlist = this.props.data.cards.trimRight().split(' ').map(function (e) {
+			return e.split(',');
+		});
+		cardlist.map(function (card, i) {
+			cards.push(React.createElement(Card, { key: i, data: card }));
 		});
 
-		if (this.props.data.isDealer) {
+		if (+this.props.data.is_dealer) {
 			return React.createElement(
 				'div',
 				{ className: 'row user user--orange' },
@@ -82,7 +53,7 @@ var User = React.createClass({
 					React.createElement(
 						'li',
 						{ className: 'user__name' },
-						this.props.data.name
+						this.props.data.username
 					),
 					React.createElement(
 						'li',
@@ -111,7 +82,7 @@ var User = React.createClass({
 					React.createElement(
 						'li',
 						{ className: 'user__name' },
-						this.props.data.name
+						this.props.data.username
 					),
 					React.createElement(
 						'li',
@@ -150,8 +121,8 @@ var PlainUserList = React.createClass({
 	render: function () {
 		var users = [];
 
-		this.props.data.map(function (user) {
-			users.push(React.createElement(User, { key: user.name, data: user }));
+		this.props.data.map(function (user, i) {
+			users.push(React.createElement(User, { key: i, data: user }));
 		});
 
 		return React.createElement(

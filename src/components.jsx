@@ -1,48 +1,16 @@
 var Card = React.createClass({
 	getSymbol: function(id) {
-		switch (id) {
-			case 0:
-				return('A');
-			case 1:
-			case 2:
-			case 3:
-			case 4:
-			case 5:
-			case 6:
-			case 7:
-			case 8:
-			case 9:
-				return(id++);
-			case 10:
-				return('B');
-			case 11:
-				return('D');
-			case 12:
-				return('K');
-			default:
-				return(id);
-		}
+		return ['A', 2, 3, 4, 5, 6, 7, 8, 9, 10,'B', 'D', 'K'][id];
 	},
 	getSuit: function(id) {
-		switch (id) {
-			case 0:
-				return('♥');
-			case 1:
-				return('♦');
-			case 2:
-				return('♣');
-			case 3:
-				return('♠');
-			default:
-				return(id);
-		}
+		return ['♥', '♦', '♣', '♠'][id];
 	},
 	render: function() {
 		return(
 			<li className="card">
-				<div className="card__top">{this.getSymbol(this.props.data[1])}</div>
-				<div className="card__suit">{this.getSuit(this.props.data[0])}</div>
-				<div className="card__bottom">{this.getSymbol(this.props.data[1])}</div>
+				<div className="card__top">{this.getSymbol(+this.props.data[1])}</div>
+				<div className="card__suit">{this.getSuit(+this.props.data[0])}</div>
+				<div className="card__bottom">{this.getSymbol(+this.props.data[1])}</div>
 			</li>
 		);
 	}
@@ -52,15 +20,16 @@ var User = React.createClass({
 	render: function() {
 		var cards = [];
 
-		this.props.data.cardlist.map(function(card) {
-			cards.push(<Card key={Math.random()}  data={card} />);
+		var cardlist = this.props.data.cards.trimRight().split(' ').map(function(e) {return e.split(',')});
+		cardlist.map(function(card, i) {
+			cards.push(<Card key={i}  data={card} />);
 		});
 
-		if (this.props.data.isDealer) {
+		if (+this.props.data.is_dealer) {
 			return (
 				<div className="row user user--orange">
 					<ul className="user__info">
-						<li className="user__name">{this.props.data.name}</li>
+						<li className="user__name">{this.props.data.username}</li>
 						<li><span className="user__score">{this.props.data.score}</span> Punkte</li>
 					</ul>
 					<ul className="user__cardlist">{cards}</ul>
@@ -70,7 +39,7 @@ var User = React.createClass({
 			return (
 				<div className="row user">
 					<ul className="user__info">
-						<li className="user__name">{this.props.data.name}</li>
+						<li className="user__name">{this.props.data.username}</li>
 						<li><span className="user__score">{this.props.data.score}</span> Punkte</li>
 						<li><span className="user__balance">{this.props.data.balance}</span>&euro;</li>
 					</ul>
@@ -85,8 +54,8 @@ var PlainUserList = React.createClass({
 	render: function() {
 		var users = [];
 
-		this.props.data.map(function(user) {
-			users.push(<User key={user.name} data={user} />);
+		this.props.data.map(function(user, i) {
+			users.push(<User key={i} data={user} />);
 		});
 
 		return(

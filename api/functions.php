@@ -178,9 +178,15 @@
 				return ['err' => 'Es läuft gerade kein Spiel.', 'data' => null];
 			}
 
+			$data = $this->database->query('SELECT u.`username`, 0 AS "is_dealer", u.`balance`, p.`cards`, p.`is_finished` FROM `player` p JOIN `user` u ON p.`user_id` = u.`id` WHERE p.`game_id` = (	SELECT g.`id` FROM `game` g WHERE g.`end_time` IS NULL ORDER BY(g.`start_time`) DESC LIMIT 1)');
+
+			for ($i=0; $i < count($data); $i++) {
+				$data[$i]['score'] = $this->player_score($data[$i]['cards']);
+			}
+
 			$output = [
 				'err' => null,
-				'data' => $this->database->query('SELECT u.`username`, 0 AS "is_dealer", p.`cards`, p.`is_finished` FROM `player` p JOIN `user` u ON p.`user_id` = u.`id` WHERE p.`game_id` = (	SELECT g.`id` FROM `game` g WHERE g.`end_time` IS NULL ORDER BY(g.`start_time`) DESC LIMIT 1)')
+				'data' => $data
 			];
 
 			return $output;
