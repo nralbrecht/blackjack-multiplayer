@@ -121,13 +121,13 @@
 			}
 
 			// insert new player with random cards
-			$this->database->query("INSERT INTO `player`(`game_id`, `user_id`, `cards`, `bet`) VALUES (".$res_game[0]['id'].", (SELECT `user_id` FROM `tokkens` WHERE `tokken` = '".$tokken."'), '".rand(0, 3).",".rand(0, 13)." ".rand(0, 3).",".rand(0, 13)." ', ".$bet.");");
+			$this->database->query("INSERT INTO `player`(`game_id`, `user_id`, `cards`, `bet`) VALUES (".$res_game[0]['id'].", (SELECT `user_id` FROM `tokkens` WHERE `tokken` = '".$tokken."'), '".rand(0, 3).",".rand(0, 12)." ".rand(0, 3).",".rand(0, 12)." ', ".$bet.");");
 
 			return "CREATED";
 		}
 
 		public function add_card($tokken) {
-			$this->database->query("UPDATE `player` SET `cards` = CONCAT(`cards`, '".rand(0, 3).",".rand(0, 13)." ') WHERE `game_id` = (SELECT `id` FROM `game` WHERE `end_time` IS NULL ORDER BY(`start_time`) DESC LIMIT 1) AND `user_id` = (SELECT `user_id` FROM `tokkens` WHERE `tokken` = '".$tokken."');");
+			$this->database->query("UPDATE `player` SET `cards` = CONCAT(`cards`, '".rand(0, 3).",".rand(0, 12)." ') WHERE `game_id` = (SELECT `id` FROM `game` WHERE `end_time` IS NULL ORDER BY(`start_time`) DESC LIMIT 1) AND `user_id` = (SELECT `user_id` FROM `tokkens` WHERE `tokken` = '".$tokken."');");
 		}
 
 		private function player_score($cards) {

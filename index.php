@@ -27,13 +27,7 @@
 			</div>
 		</nav>
 		<main class="container">
-			<div class="controll">
-				<div class="controll__title row">Bedienung</div>
-				<div class="row">
-					<a class="button controll__button" href="#">Karte ziehen</a>
-					<a class="button controll__button" href="#">Aufhören</a>
-				</div>
-			</div>
+			<div id="controlls"></div>
 			<div id="userlist"></div>
 		</main>
 		<script src="js/components.js"></script>

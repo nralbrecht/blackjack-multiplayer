@@ -191,7 +191,7 @@ body {
 
 
 /* CONTROLL PANEL */
-	.controll {
+	#controll {
 		margin-bottom: 3rem;
 	}
 	.controll__button {

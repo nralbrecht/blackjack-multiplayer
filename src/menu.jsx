@@ -169,14 +169,95 @@ var NavigationItemList = React.createClass({
 	}
 });
 
+/* CONTROLLS */
+var game_bet = null;
+
+var GameControlls = React.createClass({
+	add_card: function() {
+		ajax_get('api/add_card.php?tokken=' + user_info.tokken, true);
+	},
+	finish: function() {
+		ajax_get('api/finish_round.php?tokken=' + user_info.tokken, true);
+
+		game_bet = null;
+		// TODO: update player balance
+		// TODO: display win/los msg
+
+		menu_rerender();
+	},
+	render: function() {
+		return(
+			<div className="controll_content">
+				<div className="controll__title row">Bedienung</div>
+				<div className="row">
+					<a className="button controll__button" onClick={this.add_card}>Karte ziehen</a>
+					<a className="button controll__button" onClick={this.finish}>Aufhören</a>
+				</div>
+			</div>
+		);
+	}
+});
+var JoinControll = React.createClass({
+	getInitialState: function() {
+		return({bet: ''});
+	},
+	handleChange: function(event) {
+		this.setState({bet: event.target.value});
+	},
+	join: function() {
+		console.log(this.state.bet);
+		if (Number.isInteger(+this.state.bet)) {
+			ajax_get('api/join.php?tokken=' + user_info.tokken + '&bet=' + this.state.bet, true);
+
+			game_bet = this.state.bet;
+			menu_rerender();
+		}
+	},
+	render: function() {
+		return(
+			<div className="controll_content" >
+				<div className="controll__title row">Spiel betreten</div>
+				<div className="row">
+					<label>
+						<input type="text" name="bet" placeholder="10€" value={this.state.bet} onChange={this.handleChange}></input>
+					</label>
+					<a className="button controll__button" onClick={this.join}>Spiel betreten</a>
+				</div>
+			</div>
+		);
+	}
+});
+
+var Controlls = React.createClass({
+	render: function() {
+		if (user_info) {
+			if (game_bet) {
+				return(
+					<GameControlls />
+				);
+			} else {
+				return(
+					<JoinControll />
+				);
+			}
+		} else {
+			return(null);
+		}
+	}
+});
+
 var menu_rerender = function() {
 	React.render(
-		<NavigationItemList data={user_info}/>,
+		<NavigationItemList />,
 		document.getElementsByTagName('nav')[0].getElementsByClassName('navigation__itemlist')[0]
 	);
 	React.render(
 		<Dropdown action="CLOSE"/>,
 		document.getElementById('dropdown')
+	);
+	React.render(
+		<Controlls />,
+		document.getElementById('controlls')
 	);
 	dropdown_is_open = false;
 };
