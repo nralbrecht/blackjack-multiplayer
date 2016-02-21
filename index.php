@@ -21,18 +21,9 @@
 				<div class="row">
 					<a href="./" class="navigation__title">Blackjack</a>
 					<div class="column"></div>
-					<div class="navigation__itemlist">
-						<ul>
-							<li>
-								<a onclick="document.getElementById('dropdown').style.display=(document.getElementById('dropdown').style.display == 'none')? 'block':'none';">Login</a>
-							</li>
-							<li>
-								<a onclick="document.getElementById('dropdown').style.display=(document.getElementById('dropdown').style.display == 'none')? 'block':'none';">Logout</a>
-							</li>
-						</ul>
-					</div>
+					<div class="navigation__itemlist"></div>
 				</div>
-				<div id="dropdown" style="display: none"></div>
+				<div id="dropdown"></div>
 			</div>
 		</nav>
 		<main class="container">
