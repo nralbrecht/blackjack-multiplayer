@@ -37,5 +37,6 @@
 			<div id="userlist"></div>
 		</main>
 		<script src="js/components.js"></script>
+		<script src="js/menu.js"></script>
 	</body>
 </html>
