@@ -46,7 +46,11 @@
 			$this->database = new DatabaseWrapper($dbname);
 		}
 
-		public function generate_tokken($username) {
+		public function get_user_balance($username) {
+			return $this->database->query("SELECT `balance` FROM `user` WHERE `enabled` = 1 AND `username` = '".$username."' LIMIT 1;")[0]['balance'];
+		}
+
+		public function get_tokken($username) {
 			$res = $this->database->query("SELECT `id` FROM `user` WHERE `enabled` = 1 AND `username` = '".$username."' LIMIT 1;");
 			if (empty($res)) { return false; }
 			$id = $res[0]['id'];
