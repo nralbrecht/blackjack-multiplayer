@@ -14,6 +14,7 @@ var ajax_get = function (path, async) {
 
 var user_info = null;
 
+/* MENU */
 var LoginDropdown = React.createClass({
 	displayName: "LoginDropdown",
 
@@ -43,13 +44,13 @@ var LoginDropdown = React.createClass({
 			),
 			React.createElement(
 				"label",
-				{ classfor: "username" },
+				null,
 				"Benutzername:",
 				React.createElement("input", { type: "text", name: "username", value: this.state.username, onChange: this.handleChange })
 			),
 			React.createElement(
 				"label",
-				{ "for": "password" },
+				null,
 				"Passwort:",
 				React.createElement("input", { type: "password", name: "password", value: this.state.password, onChange: this.handleChange })
 			),
@@ -57,6 +58,62 @@ var LoginDropdown = React.createClass({
 				"a",
 				{ className: "button", onClick: this.login },
 				"Anmelden"
+			)
+		);
+	}
+});
+
+var RegisterDropdown = React.createClass({
+	displayName: "RegisterDropdown",
+
+	register: function () {
+		ajax_get('api/register.php?username=' + this.state.username + '&password=' + this.state.password + '&password2=' + this.state.password2, false);
+
+		menu_rerender();
+	},
+	getInitialState: function () {
+		return { username: '', password: '', password2: '' };
+	},
+	handleChange: function (event) {
+		if (event.target.name == 'username') {
+			this.setState({ username: event.target.value });
+		} else if (event.target.name == 'password') {
+			this.setState({ password: event.target.value });
+		} else if (event.target.name == 'password2') {
+			this.setState({ password2: event.target.value });
+		}
+	},
+	render: function () {
+		return React.createElement(
+			"div",
+			{ className: "dropdown__content" },
+			React.createElement(
+				"h4",
+				null,
+				"Registrieren"
+			),
+			React.createElement(
+				"label",
+				null,
+				"Benutzername:",
+				React.createElement("input", { type: "text", name: "username", value: this.state.username, onChange: this.handleChange })
+			),
+			React.createElement(
+				"label",
+				null,
+				"Passwort:",
+				React.createElement("input", { type: "password", name: "password", value: this.state.password, onChange: this.handleChange })
+			),
+			React.createElement(
+				"label",
+				null,
+				"Passwort wiederholen:",
+				React.createElement("input", { type: "password", name: "password2", value: this.state.password2, onChange: this.handleChange })
+			),
+			React.createElement(
+				"a",
+				{ className: "button", onClick: this.register },
+				"Registrieren"
 			)
 		);
 	}
@@ -70,6 +127,8 @@ var Dropdown = React.createClass({
 			return null;
 		} else if (this.props.action == "LOGIN") {
 			return React.createElement(LoginDropdown, null);
+		} else if (this.props.action == "REGISTER") {
+			return React.createElement(RegisterDropdown, null);
 		}
 	}
 });
@@ -88,15 +147,18 @@ var NavigationItemList = React.createClass({
 		}
 	},
 	openRegister: function () {
-		console.log("not_implemented");
+		if (this.dropdown_is_open) {
+			React.render(React.createElement(Dropdown, { action: "CLOSE" }), document.getElementById('dropdown'));
+			this.dropdown_is_open = false;
+		} else {
+			React.render(React.createElement(Dropdown, { action: "REGISTER" }), document.getElementById('dropdown'));
+			this.dropdown_is_open = true;
+		}
 	},
 	logout: function () {
 		ajax_get('api/logout.php?tokken=' + user_info.tokken, true);
 		user_info = null;
 		menu_rerender();
-	},
-	openSetings: function () {
-		console.log("not_implemented");
 	},
 	render: function () {
 		if (user_info) {
@@ -117,7 +179,7 @@ var NavigationItemList = React.createClass({
 					null,
 					React.createElement(
 						"a",
-						{ onClick: this.openSetings },
+						null,
 						user_info.username + '(' + user_info.balance + '€)'
 					)
 				)
@@ -140,7 +202,7 @@ var NavigationItemList = React.createClass({
 					null,
 					React.createElement(
 						"a",
-						{ onClick: this.openLogin },
+						{ onClick: this.openRegister },
 						"Registrieren"
 					)
 				)
@@ -152,6 +214,7 @@ var NavigationItemList = React.createClass({
 var menu_rerender = function () {
 	React.render(React.createElement(NavigationItemList, { data: user_info }), document.getElementsByTagName('nav')[0].getElementsByClassName('navigation__itemlist')[0]);
 	React.render(React.createElement(Dropdown, { action: "CLOSE" }), document.getElementById('dropdown'));
+	dropdown_is_open = false;
 };
 
 menu_rerender();
